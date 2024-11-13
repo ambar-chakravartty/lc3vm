@@ -103,6 +103,50 @@ void LCThree::ld(Word& instr){
     setcc(dr);
 }
 
+void LCThree::ldi(Word& instr){
+    Word dr = (instr >> 9) & 0x7;
+    Word pc_offset = instr & 0x100;
+
+    Word addr0 = PC + sign_extend(instr & 0x1FF, 9);
+    Word addr = memory[addr0];
+    registers[dr] = memory[addr];
+    setcc(dr); 
+}
+
+void LCThree::ldr(Word& instr){
+    Word dr = (instr >> 9) & 0x7;
+    Word baseR = (instr >> 6) & 0x7;
+    Word pc_offset = instr & 0x100;
+
+    Word addr = registers[baseR] + sign_extend(instr & 0x1FF, 9); //fix this sign extend
+
+    registers[dr] = memory[addr];
+    setcc(dr);
+
+
+}
+
+void LCThree::lea(Word& instr){
+    Word dr = (instr >> 9) & 0x7;
+    Word pc_offset = instr & 0x100;
+
+    Word addr = PC + sign_extend(instr & 0x1FF, 9); //fix this sign extend
+    registers[dr] = addr;
+    setcc(dr);
+}
+
+void LCThree::op_not(Word& instr){
+    Word dr = (instr >> 9) & 0x7;
+    Word sr = (instr >> 6) & 0x7;
+
+    registers[dr] = ~registers[sr];
+    setcc(dr);
+}
+
+void LCThree::ret(Word& instr){
+    PC = memory[R7];
+}
+
 void LCThree::setcc(uint8_t reg){
     if(registers[reg] < 0){
         registers[FLAGS] &= 0x4;

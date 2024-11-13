@@ -73,6 +73,11 @@ public:
     void ret(Word& instr);
     void jsr(Word& instr);
     void ld(Word& instr);
+    void ldi(Word& instr);
+    void ldr(Word& instr);
+    void lea(Word& instr);
+    void op_not(Word& instr);
+    void ret(Word& instr);
     void setcc(uint8_t reg);
     Word sign_extend(Word x, int bit_count);
 
