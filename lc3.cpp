@@ -67,7 +67,7 @@ void LCThree::op_and(Word& instr){
 
 void LCThree::br(Word& instr){
     Word cond = (instr >> 9) & 0x7;
-    Word offset = sign_extend(instr & 0x1FF, 9); //check this sign extension
+    Word offset = sign_extend(instr & 0x1FF, 9);
     if(cond & FLAGS){
         PC += offset;
     }    
@@ -87,7 +87,7 @@ void LCThree::jsr(Word& instr){
     Word bit_11 = (instr >> 11) & 0x1;
 
     if(bit_11){
-        PC += sign_extend(instr & 0x1FF, 9); // fix this sign extension later
+        PC += sign_extend(instr & 0x7FF, 11); 
     }else{
         Word base_r = (instr >> 6) & 0x7;
         PC = base_r;
@@ -98,7 +98,7 @@ void LCThree::ld(Word& instr){
     Word dr = (instr >> 9) & 0x7;
     Word pc_offset = instr & 0x100;
 
-    Word addr = PC + sign_extend(instr & 0x1FF, 9); //fix this sign extend
+    Word addr = PC + sign_extend(instr & 0x1FF, 9);
     registers[dr] = memory[addr];
     setcc(dr);
 }
@@ -118,7 +118,7 @@ void LCThree::ldr(Word& instr){
     Word baseR = (instr >> 6) & 0x7;
     Word pc_offset = instr & 0x100;
 
-    Word addr = registers[baseR] + sign_extend(instr & 0x1FF, 9); //fix this sign extend
+    Word addr = registers[baseR] + sign_extend(instr & 0x3f, 6); 
 
     registers[dr] = memory[addr];
     setcc(dr);
@@ -130,7 +130,7 @@ void LCThree::lea(Word& instr){
     Word dr = (instr >> 9) & 0x7;
     Word pc_offset = instr & 0x100;
 
-    Word addr = PC + sign_extend(instr & 0x1FF, 9); //fix this sign extend
+    Word addr = PC + sign_extend(instr & 0x1FF, 9);
     registers[dr] = addr;
     setcc(dr);
 }
@@ -176,6 +176,32 @@ void LCThree::run(){
             case OP_AND:
                 op_and(instr);
                 break;
+            case OP_BR:
+                op_and(instr);
+                break;
+            case OP_JMP:
+                jmp(instr);
+                break;
+            case OP_JSR:
+                jsr(instr);
+                break;
+            case OP_LD:
+                ld(instr);
+                break;
+            case OP_LDI:
+                ldi(instr);
+                break;
+            case OP_LDR:
+                ldr(instr);
+                break;
+            case OP_LEA:
+                lea(instr);
+                break;
+            case OP_NOT:
+                op_not(instr);
+                break;
+            
+            
         }
     }
 }
